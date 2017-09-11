@@ -25,9 +25,8 @@ A maneira mais fácil de instalar a biblioteca é através do [Composer](http://
 Adicione ao seu arquivo `.env` os seguintes valores
 
 ```
-KONDUTO_ENVIRONMENT=production
 KONDUTO_DEBUG=true 
-KONDUTO_PUBLICK_KEY=SUA_CHAVE_PUBLICA_FORNECIDA_PELA_KONDUTO
+KONDUTO_PUBLIC_KEY=SUA_CHAVE_PUBLICA_FORNECIDA_PELA_KONDUTO
 KONDUTO_PRIVATE_KEY=SUA_CHAVE_PRIVADA_FORNECIDA_PELA_KONDUTO
 ```
 
@@ -41,10 +40,9 @@ return [
     // outros serviços
     
     'konduto' => [
-        'environment' => env( 'KONDUTO_ENVIRONMENT', 'production' ), // 'production' or 'sandbox'
-        'debug' => env('KONDUTO_DEBUG', true), // true ou false indicando se você quer logar os requests
-        'public' => env('KONDUTO_PUBLIC_KEY'),
-        'private' => env('KONDUTO_PRIVATE_KEY'),
+        'debug' => env( 'KONDUTO_DEBUG', true ), // true ou false indicando se você quer logar os requests
+        'public_key' => env( 'KONDUTO_PUBLIC_KEY' ),
+        'private_key' => env( 'KONDUTO_PRIVATE_KEY' ),
     ],
 
 ];

@@ -3,14 +3,19 @@
 namespace RodrigoPedra\LaravelKonduto;
 
 use Exception;
+use Illuminate\Http\Request;
+use InvalidArgumentException;
 use Konduto\Core\Konduto;
 use Konduto\Models\Order;
-use Illuminate\Http\Request;
 use Psr\Log\LoggerInterface;
-use InvalidArgumentException;
 
 class KondutoService
 {
+    /** http://docs.konduto.com/pt/#resposta-da-api-de-pedidos */
+    const RECOMMENDATION_APPROVE = 'approve';
+    const RECOMMENDATION_REVIEW  = 'review';
+    const RECOMMENDATION_DECLINE = 'decline';
+
     /** @see http://ajuda.konduto.com/article/114-entendendo-os-status-dos-pedidos */
     const ORDER_STATUS_APPROVED       = 'approved';
     const ORDER_STATUS_PENDING        = 'pending';
@@ -20,7 +25,7 @@ class KondutoService
     const ORDER_STATUS_FRAUD          = 'fraud';
     const ORDER_STATUS_NOT_ANALYZED   = 'not_analyzed';
 
-    private static $updateStatusList = [
+    private static $updateOrderStatusList = [
         self::ORDER_STATUS_APPROVED,
         self::ORDER_STATUS_DECLINED,
         self::ORDER_STATUS_NOT_AUTHORIZED,
@@ -36,6 +41,11 @@ class KondutoService
 
     /** @var LoggerInterface */
     private $logger;
+
+    public function getIp()
+    {
+        return $this->request->getClientIp();
+    }
 
     public function __construct(
         Request $request,
@@ -64,9 +74,15 @@ class KondutoService
         return 'API';
     }
 
-    public function getIp()
+    public function getCustomerId()
     {
-        return $this->request->getClientIp();
+        $user = $this->request->user();
+
+        if (is_null( $user )) {
+            return false;
+        }
+
+        return $user->getAuthIdentifier();
     }
 
     /**
@@ -156,7 +172,7 @@ class KondutoService
      */
     public function updateOrderStatus( $orderId, $newStatusCode, $notes = '' )
     {
-        if (!in_array( $newStatusCode, self::$updateStatusList )) {
+        if (!in_array( $newStatusCode, self::$updateOrderStatusList )) {
             throw new InvalidArgumentException( sprintf( 'Invalid new status code (%s)', $newStatusCode ) );
         }
 

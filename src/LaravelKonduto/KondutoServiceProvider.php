@@ -11,7 +11,6 @@ class KondutoServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->bootConfig();
         $this->bootViews();
 
         $this->app->alias( 'konduto', KondutoService::class );
@@ -27,15 +26,8 @@ class KondutoServiceProvider extends ServiceProvider
                 $this->app[ 'config' ]->get( 'services.konduto.debug' ) ? $this->app[ 'log' ] : null
             );
         } );
-    }
 
-    private function bootConfig()
-    {
-        $this->publishes( [
-            __DIR__ . '/../config/clearsale-id.php' => config_path( 'konduto.php' ),
-        ] );
-
-        $this->mergeConfigFrom( __DIR__ . '/../config/konduto.php', 'konduto' );
+        $this->app->alias( 'konduto', KondutoService::class );
     }
 
     private function bootViews()
@@ -47,6 +39,13 @@ class KondutoServiceProvider extends ServiceProvider
             $service = $this->app->make( 'konduto' );
 
             $view->with( 'publicKey', $service->getPublicKey() );
+        } );
+
+        View::composer( 'konduto::gtm-customer-id', function ( $view ) {
+            /** @var KondutoService $service */
+            $service = $this->app->make( 'konduto' );
+
+            $view->with( 'customerId', $service->getCustomerId() );
         } );
     }
 
