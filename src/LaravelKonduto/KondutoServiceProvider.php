@@ -29,6 +29,15 @@ class KondutoServiceProvider extends ServiceProvider
         } );
     }
 
+    private function bootConfig()
+    {
+        $this->publishes( [
+            __DIR__ . '/../config/clearsale-id.php' => config_path( 'konduto.php' ),
+        ] );
+
+        $this->mergeConfigFrom( __DIR__ . '/../config/konduto.php', 'konduto' );
+    }
+
     private function bootViews()
     {
         $this->loadViewsFrom( __DIR__ . '/../resources/views', 'konduto' );
