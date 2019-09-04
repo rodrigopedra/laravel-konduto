@@ -14,7 +14,7 @@
   ],
   "require": {
     "php": ">=5.6.4",
-    "illuminate/support": "5.4.*",
+    "illuminate/support": "5.5.*",
     "illuminate/contracts": "5.4.*",
     "illuminate/http": "5.4.*",
     "konduto/sdk": "^2.0"
