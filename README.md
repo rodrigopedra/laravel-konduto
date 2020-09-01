@@ -30,20 +30,10 @@ KONDUTO_PUBLIC_KEY=SUA_CHAVE_PUBLICA_FORNECIDA_PELA_KONDUTO
 KONDUTO_PRIVATE_KEY=SUA_CHAVE_PRIVADA_FORNECIDA_PELA_KONDUTO
 ```
 
-Adicione ao seu arquivo `config/services.php` as seguintes configurações
+Você também pode customizar as configurações diretamente no arquivo de configuração, utilizando o comando abaixo:
 
-```php
-<?php
-    
-return [
-
-    // outros serviços
-    
-    'konduto' => [
-        'debug' => env( 'KONDUTO_DEBUG', true ), // true ou false indicando se você quer logar os requests
-        'public_key' => env( 'KONDUTO_PUBLIC_KEY' ),
-        'private_key' => env( 'KONDUTO_PRIVATE_KEY' ),
-    ],
-
-];
 ```
+php artisan vendor:publish --provider="RodrigoPedra\LaravelKonduto\KondutoServiceProvider"
+```
+
+Ele irá gerar o arquivo `config/laravel-konduto.php` na sua aplicação Laravel.

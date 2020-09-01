@@ -1,27 +1,37 @@
 {
-  "name": "rodrigopedra/laravel-konduto",
-  "description": "Laravel Konduto API Integration",
-  "keywords": [
-    "Konduto",
-    "Laravel"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Rodrigo Pedra Brum",
-      "email": "rodrigo.pedra@gmail.com"
+    "name": "rodrigopedra/laravel-konduto",
+    "description": "Laravel Konduto API Integration",
+    "keywords": [
+        "Konduto",
+        "Laravel"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rodrigo Pedra Brum",
+            "email": "rodrigo.pedra@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3",
+        "illuminate/support": "5.6.*|5.7.*|5.8.*",
+        "illuminate/contracts": "5.6.*|5.7.*|5.8.*",
+        "illuminate/http": "5.6.*|5.7.*|5.8.*",
+        "konduto/sdk": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RodrigoPedra\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RodrigoPedra\\LaravelKonduto\\KondutoServiceProvider"
+            ],
+            "aliases": {
+                "Konduto": "RodrigoPedra\\LaravelKonduto\\Facades\\KondutoFacade"
+            }
+        }
     }
-  ],
-  "require": {
-    "php": ">=5.6.4",
-    "illuminate/support": "5.4.*|5.5.*|5.6.*",
-    "illuminate/contracts": "5.4.*|5.5.*|5.6.*",
-    "illuminate/http": "5.4.*|5.5.*|5.6.*",
-    "konduto/sdk": "^2.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "RodrigoPedra\\": "src/"
-    }
-  }
 }
