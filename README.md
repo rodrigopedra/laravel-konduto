@@ -6,7 +6,8 @@ https://github.com/konduto/php-sdk
 
 ## Requisitos
 
-PHP 5.5+
+- **PHP:** `7.1.3+`
+- **Laravel:** `5.6`, `5.7`, `5.8`
 
 ## Instalação
 
@@ -15,7 +16,7 @@ A maneira mais fácil de instalar a biblioteca é através do [Composer](http://
 ```JSON
 {
     "require": {
-        "rodrigopedra/laravel-konduto": "^0.1"
+        "rodrigopedra/laravel-konduto": "^1.0"
     }
 }
 ```
