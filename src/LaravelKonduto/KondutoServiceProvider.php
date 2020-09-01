@@ -13,17 +13,21 @@ class KondutoServiceProvider extends ServiceProvider
     {
         $this->bootViews();
 
-        $this->app->alias( 'konduto', KondutoService::class );
+        $this->publishes( [
+            __DIR__ . '/../resources/config/laravel-konduto.php' => $this->app->configPath( 'laravel-konduto.php' ),
+        ], 'config' );
     }
 
     public function register()
     {
+        $this->mergeConfigFrom( __DIR__ . '/../resources/config/laravel-konduto.php', 'laravel-konduto' );
+
         $this->app->singleton( 'konduto', function () {
             return new KondutoService(
                 $this->app[ 'request' ],
-                $this->app[ 'config' ]->get( 'services.konduto.public_key' ),
-                $this->app[ 'config' ]->get( 'services.konduto.private_key' ),
-                $this->app[ 'config' ]->get( 'services.konduto.debug' ) ? $this->app[ 'log' ] : null
+                $this->app[ 'config' ]->get( 'laravel-konduto.public_key' ),
+                $this->app[ 'config' ]->get( 'laravel-konduto.private_key' ),
+                $this->app[ 'config' ]->get( 'laravel-konduto.debug' ) ? $this->app[ 'log' ] : null
             );
         } );
 
@@ -47,15 +51,5 @@ class KondutoServiceProvider extends ServiceProvider
 
             $view->with( 'customerId', $service->getCustomerId() );
         } );
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [ 'konduto' ];
     }
 }
