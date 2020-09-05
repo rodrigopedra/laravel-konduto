@@ -166,7 +166,7 @@ class KondutoService
      */
     public function updateOrderStatus(string $orderId, string $newStatusCode, string $notes = ''): bool
     {
-        if (! in_array($newStatusCode, self::$updateOrderStatusList)) {
+        if (! \in_array($newStatusCode, self::$updateOrderStatusList)) {
             throw new \InvalidArgumentException(sprintf('Invalid new status code (%s)', $newStatusCode));
         }
 
