@@ -2,54 +2,67 @@
 
 namespace RodrigoPedra\LaravelKonduto;
 
-use Illuminate\Support\Facades\View;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
+use Psr\Log\LoggerInterface;
+use RodrigoPedra\LaravelKonduto\ViewComposers\BaseScriptViewComposer;
+use RodrigoPedra\LaravelKonduto\ViewComposers\GTMCustomerIDViewComposer;
 
 class KondutoServiceProvider extends ServiceProvider
 {
     protected $defer = false;
 
-    public function boot()
+    public function boot(Factory $viewFactory): void
     {
-        $this->bootViews();
-
-        $this->publishes( [
-            __DIR__ . '/../resources/config/laravel-konduto.php' => $this->app->configPath( 'laravel-konduto.php' ),
-        ], 'config' );
+        $this->bootConfig();
+        $this->bootViews($viewFactory);
     }
 
-    public function register()
+    public function register(): void
     {
-        $this->mergeConfigFrom( __DIR__ . '/../resources/config/laravel-konduto.php', 'laravel-konduto' );
+        $this->app->singleton(KondutoService::class, static function (Container $container): KondutoService {
+            $request = $container->make(Request::class);
+            $config = $container->make(Repository::class);
+            $logger = $config->get('laravel-konduto.debug', true) === true
+                ? $container->make(LoggerInterface::class)
+                : null;
 
-        $this->app->singleton( 'konduto', function () {
             return new KondutoService(
-                $this->app[ 'request' ],
-                $this->app[ 'config' ]->get( 'laravel-konduto.public_key' ),
-                $this->app[ 'config' ]->get( 'laravel-konduto.private_key' ),
-                $this->app[ 'config' ]->get( 'laravel-konduto.debug' ) ? $this->app[ 'log' ] : null
+                $request,
+                $config->get('laravel-konduto.public_key'),
+                $config->get('laravel-konduto.private_key'),
+                $logger
             );
-        } );
+        });
 
-        $this->app->alias( 'konduto', KondutoService::class );
+        $this->app->alias(KondutoService::class, 'konduto');
     }
 
-    private function bootViews()
+    private function bootConfig(): void
     {
-        $this->loadViewsFrom( __DIR__ . '/../resources/views', 'konduto' );
+        $this->publishes([
+            __DIR__ . '/../config/laravel-konduto.php' => $this->app->configPath('laravel-konduto.php'),
+        ]);
 
-        View::composer( 'konduto::base-script', function ( $view ) {
-            /** @var KondutoService $service */
-            $service = $this->app->make( 'konduto' );
+        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-konduto.php', 'laravel-konduto');
+    }
 
-            $view->with( 'publicKey', $service->getPublicKey() );
-        } );
+    private function bootViews(Factory $viewFactory): void
+    {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'konduto');
 
-        View::composer( 'konduto::gtm-customer-id', function ( $view ) {
-            /** @var KondutoService $service */
-            $service = $this->app->make( 'konduto' );
+        $viewFactory->composer('konduto::base-script', BaseScriptViewComposer::class);
+        $viewFactory->composer('konduto::gtm-customer-id', GTMCustomerIDViewComposer::class);
+    }
 
-            $view->with( 'customerId', $service->getCustomerId() );
-        } );
+    public function provides(): array
+    {
+        return [
+            KondutoService::class,
+            'konduto',
+        ];
     }
 }
