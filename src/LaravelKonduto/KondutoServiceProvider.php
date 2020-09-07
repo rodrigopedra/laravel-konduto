@@ -23,6 +23,8 @@ class KondutoServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-konduto.php', 'laravel-konduto');
+
         $this->app->singleton(KondutoService::class, static function (Container $container): KondutoService {
             $request = $container->make(Request::class);
             $config = $container->make(Repository::class);
@@ -43,11 +45,11 @@ class KondutoServiceProvider extends ServiceProvider
 
     private function bootConfig(): void
     {
-        $this->publishes([
-            __DIR__ . '/../config/laravel-konduto.php' => $this->app->configPath('laravel-konduto.php'),
-        ]);
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-konduto.php', 'laravel-konduto');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/laravel-konduto.php' => $this->app->configPath('laravel-konduto.php'),
+            ], 'laravel-konduto-config');
+        }
     }
 
     private function bootViews(Factory $viewFactory): void
